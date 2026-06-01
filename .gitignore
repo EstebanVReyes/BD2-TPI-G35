@@ -427,3 +427,14 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Ignorar copias de seguridad de la base de datos
+*.bak
+*.sql.gz
+
+# Ignorar archivos crudos de motores de bases de datos locales
+*.sqlite
+*.db
+
+# Ignorar archivos con contraseñas o cadenas de conexión
+config.json
