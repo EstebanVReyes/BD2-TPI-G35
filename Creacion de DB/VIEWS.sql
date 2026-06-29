@@ -21,3 +21,25 @@ INNER JOIN Color C ON DA.idColor = C.idColor
 INNER JOIN Talle T ON DA.idTalle = T.idTalle
 INNER JOIN Deposito D ON S.idDeposito = D.idDeposito;
 GO
+
+
+CREATE VIEW vista_articulosAReponer AS
+SELECT
+    da.idDetalle,
+    a.Nombre AS Articulo,
+    m.Nombre AS Marca,
+    r.Descripcion AS Rubro,
+    t.Nombre AS Talle,
+    c.Nombre AS Color,
+    ISNULL(SUM(s.Cantidad),0) AS StockActual
+FROM DetalleArticulo da
+INNER JOIN Articulo a ON a.idArticulo = da.idArticulo
+INNER JOIN Marca m ON m.idMarca = a.idMarca
+INNER JOIN Rubro r ON r.idRubro = a.idRubro
+INNER JOIN Talle t ON t.idTalle = da.idTalle
+INNER JOIN Color c ON c.idColor = da.idColor
+LEFT JOIN Stock s ON s.idDetalle = da.idDetalle
+GROUP BY da.idDetalle, a.Nombre, m.Nombre, r.Descripcion, t.Nombre, c.Nombre
+HAVING ISNULL(SUM(s.Cantidad),0) <= 5;
+
+

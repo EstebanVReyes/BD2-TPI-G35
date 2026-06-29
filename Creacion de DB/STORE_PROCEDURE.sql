@@ -92,4 +92,46 @@ END
 GO
 
 
+CREATE PROCEDURE sp_transferirStockEntreDepositos
+    @idDetalle INT,
+    @idDepositoOrigen INT,
+    @idDepositoDestino INT,
+    @Cantidad INT
+AS
+BEGIN
+    IF @idDepositoOrigen = @idDepositoDestino OR @Cantidad <= 0
+    BEGIN
+        PRINT 'Parámetros inválidos: depósitos iguales o cantidad no positiva.';
+        RETURN;
+    END
+
+    IF NOT EXISTS (
+        SELECT 1 FROM Stock
+        WHERE idDetalle = @idDetalle AND idDeposito = @idDepositoOrigen AND Cantidad >= @Cantidad)
+    BEGIN
+        PRINT 'Stock insuficiente en el depósito de origen.';
+        RETURN;
+    END
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        UPDATE Stock SET Cantidad = Cantidad - @Cantidad
+        WHERE idDetalle = @idDetalle AND idDeposito = @idDepositoOrigen;
+
+        IF EXISTS (SELECT 1 FROM Stock WHERE idDetalle = @idDetalle AND idDeposito = @idDepositoDestino)
+            UPDATE Stock SET Cantidad = Cantidad + @Cantidad
+            WHERE idDetalle = @idDetalle AND idDeposito = @idDepositoDestino;
+        ELSE
+            INSERT INTO Stock (idDetalle, idDeposito, Cantidad) VALUES (@idDetalle, @idDepositoDestino, @Cantidad);
+
+        COMMIT TRANSACTION;
+        PRINT 'Transferencia realizada correctamente.';
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT 'Error durante la transferencia: ' + ERROR_MESSAGE();
+    END CATCH
+END;
+
+
 
