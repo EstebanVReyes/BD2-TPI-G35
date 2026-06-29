@@ -16,7 +16,9 @@ INSERT INTO Proveedor (Nombre, Telefono, Direccion)
 VALUES ('Proveedor General','123456789','Buenos Aires');
 
 INSERT INTO Deposito (Nombre, Direccion)
-VALUES ('Deposito Central','Buenos Aires');
+VALUES ('Deposito Central','Buenos Aires'),
+       ('Deposito Flores','Buenos Aires'),
+	   ('Deposito Once','Buenos Aires');        
 
 INSERT INTO Usuario (Nombre, Apellido, NombreUsuario, Clave)
 VALUES ('Juan','Perez','jperez','123456');

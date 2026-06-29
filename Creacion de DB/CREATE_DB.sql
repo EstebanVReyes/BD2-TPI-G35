@@ -16,28 +16,50 @@ GO
 -- 2. TABLAS MAESTRAS
 -- =====================================================================
 
+
 CREATE TABLE Rubro (
     idRubro INT PRIMARY KEY IDENTITY(1,1),
-    Nombre VARCHAR(50),
+    Nombre VARCHAR(50) UNIQUE,   
     Descripcion VARCHAR(60)
 );
 
+
+
 CREATE TABLE Marca (
     idMarca INT PRIMARY KEY IDENTITY(1,1),
-    Nombre VARCHAR(50)
+    Nombre VARCHAR(50) UNIQUE
 );
+
+
 
 CREATE TABLE Proveedor (
     idProveedor INT PRIMARY KEY IDENTITY(1,1),
-    Nombre VARCHAR(60),
+    Nombre VARCHAR(60) UNIQUE,   
     Telefono VARCHAR(50),
     Direccion VARCHAR(100)
 );
+
 
 CREATE TABLE Color (
     idColor INT PRIMARY KEY IDENTITY(1,1),
     Codigo VARCHAR(5) UNIQUE,
     Nombre VARCHAR(60)
+);
+
+CREATE TABLE dbo.Stock_Temp (
+    CodBase VARCHAR(20),
+    CodColor VARCHAR(10),
+    CodTalle VARCHAR(10),
+    Cantidad INT
+);
+CREATE TABLE dbo.Stock_Error (
+    idError INT IDENTITY(1,1) PRIMARY KEY,
+    CodBase VARCHAR(20),
+    CodColor VARCHAR(10),
+    CodTalle VARCHAR(10),
+    Cantidad INT,
+    Error VARCHAR(100),
+    Fecha DATETIME
 );
 
 CREATE TABLE Talle (
@@ -71,7 +93,7 @@ CREATE TABLE Articulo (
     idRubro INT,
     idMarca INT,
     idProveedor INT,
-    CodigoBase VARCHAR(20) UNIQUE,
+    CodigoBase VARCHAR(20),
     FOREIGN KEY (idRubro) REFERENCES Rubro(idRubro),
     FOREIGN KEY (idMarca) REFERENCES Marca(idMarca),
     FOREIGN KEY (idProveedor) REFERENCES Proveedor(idProveedor)

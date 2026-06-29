@@ -1,0 +1,95 @@
+
+USE BD2_TPI_G35;
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_ProcesarStock
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ----------------------------------------
+    -- 1. ERRORES (carga los datos que tienen error en esta tabla para corregirlos)
+    ----------------------------------------
+    INSERT INTO Stock_Error 
+        (CodBase, CodColor, CodTalle, Cantidad, Error, Fecha)
+    SELECT 
+        T.CodBase,
+        T.CodColor,
+        T.CodTalle,
+        T.Cantidad,
+        CASE 
+            WHEN A.idArticulo IS NULL THEN 'No existe el artículo'
+            WHEN C.idColor IS NULL THEN 'No existe el color'
+            WHEN TA.idTalle IS NULL THEN 'No existe el talle'
+            WHEN D.idDetalle IS NULL THEN 'No existe la combinación'
+        END,
+        GETDATE()
+    FROM Stock_Temp T
+    LEFT JOIN Articulo A 
+        ON A.CodigoBase = T.CodBase
+    LEFT JOIN Color C 
+        ON C.Codigo = T.CodColor
+    LEFT JOIN Talle TA 
+        ON TA.Codigo = T.CodTalle
+    LEFT JOIN DetalleArticulo D 
+        ON D.idArticulo = A.idArticulo
+        AND D.idColor = C.idColor
+        AND D.idTalle = TA.idTalle
+    WHERE 
+        A.idArticulo IS NULL
+        OR C.idColor IS NULL
+        OR TA.idTalle IS NULL
+        OR D.idDetalle IS NULL;
+
+    ----------------------------------------
+    -- 2. DATOS VALIDOS (temp  cargamos los datos validos )
+    ----------------------------------------
+    SELECT 
+        D.idDetalle,
+        T.Cantidad
+    INTO #DatosValidos
+    FROM Stock_Temp T
+    INNER JOIN Articulo A 
+        ON A.CodigoBase = T.CodBase
+    INNER JOIN Color C 
+        ON C.Codigo = T.CodColor
+    INNER JOIN Talle TA 
+        ON TA.Codigo = T.CodTalle
+    INNER JOIN DetalleArticulo D 
+        ON D.idArticulo = A.idArticulo
+        AND D.idColor = C.idColor
+        AND D.idTalle = TA.idTalle;
+
+    ----------------------------------------
+    -- 3. UPDATE STOCK (Actualiza el stock fisico )
+    ----------------------------------------
+    UPDATE S
+    SET S.Cantidad = DV.Cantidad
+    FROM Stock S
+    INNER JOIN #DatosValidos DV 
+        ON S.idDetalle = DV.idDetalle;
+
+    ----------------------------------------
+    -- INSERT NUEVOS 
+    ----------------------------------------
+    INSERT INTO Stock (idDetalle, idDeposito, Cantidad)
+    SELECT 
+        DV.idDetalle,
+        1,
+        DV.Cantidad
+    FROM #DatosValidos DV
+    LEFT JOIN Stock S 
+        ON S.idDetalle = DV.idDetalle
+    WHERE S.idDetalle IS NULL;
+
+    ----------------------------------------
+    -- LIMPIEZA
+    ----------------------------------------
+    DROP TABLE #DatosValidos;
+    TRUNCATE TABLE Stock_Temp;
+
+END
+GO
+
+
+
