@@ -42,6 +42,9 @@ LEFT JOIN Stock s ON s.idDetalle = da.idDetalle
 GROUP BY da.idDetalle, a.Nombre, m.Nombre, r.Descripcion, t.Nombre, c.Nombre
 HAVING ISNULL(SUM(s.Cantidad),0) <= 5;
 
+SELECT * FROM vista_articulosAReponer;
+
+
 
 CREATE VIEW Vista_ArticulosMasVendidos AS
 SELECT 

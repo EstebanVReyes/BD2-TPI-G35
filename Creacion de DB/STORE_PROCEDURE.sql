@@ -133,6 +133,11 @@ BEGIN
     END CATCH
 END;
 
+SELECT * FROM Stock WHERE idDetalle = 1;
+
+EXEC sp_transferirStockEntreDepositos @idDetalle = 1, @idDepositoOrigen = 1, @idDepositoDestino = 2, @Cantidad = 1;
+
+
 
 
 

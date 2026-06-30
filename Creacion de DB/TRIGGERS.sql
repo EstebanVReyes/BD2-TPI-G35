@@ -10,6 +10,7 @@ BEGIN
 END;
 
 
+
 CREATE TRIGGER trg_actualizarTotalCompra
 ON DetalleCompra
 AFTER INSERT, UPDATE, DELETE
@@ -25,6 +26,9 @@ BEGIN
      FROM Compra c
      WHERE c.idCompra IN (SELECT idCompra FROM inserted UNION SELECT idCompra FROM deleted);
 END;
+
+SELECT Total FROM Compra WHERE idCompra = 1; 
+UPDATE DetalleCompra SET Cantidad = 10 WHERE idCompra = 1 AND idDetalle = 2;
 
 
 
