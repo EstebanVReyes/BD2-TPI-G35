@@ -55,3 +55,14 @@ BEGIN
         SELECT IdVenta, IdDetalle, Cantidad, PrecioUnitario FROM inserted;
     END
 END
+
+--ejemplos 
+
+
+
+INSERT INTO DetalleVenta (IdVenta, IdDetalle, Cantidad, PrecioUnitario)
+VALUES (1, 1, 999, 1000);
+
+
+SELECT * FROM Venta
+

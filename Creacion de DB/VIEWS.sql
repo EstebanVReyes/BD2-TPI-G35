@@ -61,3 +61,6 @@ JOIN Marca M ON A.IdMarca = M.IdMarca
 JOIN Rubro R ON A.IdRubro = R.IdRubro
 GROUP BY A.Nombre, M.Nombre, R.Nombre;
 GO
+--ejemplos
+
+SELECT * FROM Vista_ArticulosMasVendidos

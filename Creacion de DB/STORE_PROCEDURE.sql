@@ -172,3 +172,10 @@ BEGIN
     END CATCH
 END;
 GO
+
+
+--ejemplos
+
+EXEC sp_RegistrarVenta 6, 2,1 , 3400000;
+
+EXEC sp_RegistrarVenta 1,  2,1 , 3400000;
